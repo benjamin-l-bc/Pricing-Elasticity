@@ -25,7 +25,7 @@ def timeformat(a):
 
 def login(uid,password,conf,Rsquare):
     global VM_hours
-    con = pyodbc.connect('DRIVER={Server};SERVER=WIN-33K0BQ13QTB;DATABASE=PillarDB;UID={id};PWD={pas}'.format(Server='SQL Server',id=uid,pas=password))
+    con = pyodbc.connect('DRIVER={Server};SERVER=Server;DATABASE=DB;UID={id};PWD={pas}'.format(Server='SQL Server',id=uid,pas=password))
     VM_hours=pd.read_sql('with loc as (SELECT weekkey,AI_offertype,serviceinstancename,os,family,series,core,customeryear,sum(TotalUnits) as hours from v_VM_Hours h join VM_type t on h.serviceinstancename=t.Instance join datekey d on h.DateKey=d.datekey JOIN MC_MNC_EA m on h.CloudCustomerGuid=m.CloudCustomerGuid where m.CloudCustomerGuid not in (\'8A526C00-E0AB-4FCD-909F-85B5DA47356B\',\'5248E23C-A420-4DA4-B8B2-3C69DFB32955\',\'FBFA6D69-654E-458F-8559-8D16F3D3629E\',\'2E634FFB-8C57-439B-B91E-3696191C5386\',\'B5DA9F98-98D7-4937-A41D-B4A478A835C2\',\'3BD360D0-757A-49E1-9C8E-3386B6EAC942\',\'CBF13497-70E0-4DE1-9891-B9F04BFA9C03\',\'8FC2D77F-2952-4504-A043-748784C1DEF5\',\'E3D33C3F-9ACC-43D9-ABDB-33340255CE19\') and m.MNC=0 group by customeryear,weekkey,serviceinstancename,os,family,Series,core,AI_offertype) select weekkey,serviceinstancename as Instance,customeryear,AI_offertype,os,family,series,core*hours as core_hours from loc',con)
     #connect to the sqlDB and pull raw data
     VM_discount=pd.read_sql('select * from [discount%]',con)
@@ -241,4 +241,3 @@ def login(uid,password,conf,Rsquare):
                 #draw.index=draw['timeperiod']
                 #draw=draw.drop('timeperiod',axis=1)
                 #draw.plot(title='VM/{VM}_{os}_{of} use 1 order'.format(VM=i,os=j,of=k))
-login('guest','guest123',0.1,0.6)
